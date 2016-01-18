@@ -30,16 +30,16 @@
 #
 VERSION=10.1
 echo "celery init v${VERSION}."
-if [ $(id -u) -ne 0 ]; then
-    echo "Error: This program can only be used by the root user."
-    echo "       Unprivileged users must use the 'celery multi' utility, "
-    echo "       or 'celery worker --detach'."
-    exit 1
-fi
+#if [ $(id -u) -ne 0 ]; then
+#    echo "Error: This program can only be used by the root user."
+#    echo "       Unprivileged users must use the 'celery multi' utility, "
+#    echo "       or 'celery worker --detach'."
+#    exit 1
+#fi
 
 
 # Can be a runlevel symlink (e.g. S02celeryd)
-if [[ `dirname $0` == /etc/rc*.d ]]; then
+if [ $(origin_is_runlevel_dir) -eq 0 ]; then
     SCRIPT_FILE=$(readlink "$0")
 else
     SCRIPT_FILE="$0"
@@ -99,7 +99,7 @@ _config_sanity() {
 }
 
 if [ -f "$CELERY_DEFAULTS" ]; then
-    _config_sanity "$CELERY_DEFAULTS"
+    # _config_sanity "$CELERY_DEFAULTS"
     echo "Using config script: $CELERY_DEFAULTS"
     . "$CELERY_DEFAULTS"
 fi
@@ -230,7 +230,8 @@ _get_pids() {
 
 
 _chuid () {
-    su "$CELERYD_USER" -c "$CELERYD_MULTI $*"
+    # su "$CELERYD_USER" -c "$CELERYD_MULTI $*"
+    "$CELERYD_MULTI $*"
 }
 
 
